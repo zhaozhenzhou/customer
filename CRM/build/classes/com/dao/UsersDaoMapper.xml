@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.UsersDao">
+	
+	<resultMap type="Users" id="usersResultMap">
+		<id property="id" column = "id"/>
+		<result property="userName" column="user_name"/>
+		<result property="password" column="password"/>
+		<result property="registerDate" column="register_date"/>
+		<result property="name" column="name"/>
+		<result property="sex" column="sex"/>
+		<result property="dept" column="dept"/>
+		<result property="job" column="job"/>
+		<result property="state" column="state"/>
+		<result property="usersRole.id" column="role_id"/>
+		<result property="usersRole.name" column="role_name"/>
+		<result property="usersRole.state" column="role_state"/>
+		<result property="usersRole.registerDate" column="role_register_date"/>
+		<result property="usersRole.describe" column="role_describe"/>
+		<collection property="usersRole.accredits" ofType="Accredit">
+			<id property="id" column="accredit_id" />
+			<result property="limit.id" column="limit_id" />
+			<result property="limit.name" column="limit_name" />
+			<result property="limit.parentId" column="parent_id" />
+		</collection>
+	</resultMap>
+
+	<select id="findByUsername" parameterType="String" resultMap="usersResultMap">
+	select users.*,
+  	users_role.id as role_id,users_role.name as role_name,users_role.state as role_state,users_role.REGISTER_DATE as role_REGISTER_DATE,users_role.describe as role_describe,
+  	limit.id as limit_id,limit.name as limit_name,limit.parent_id
+    from users left join users_role on users.users_role=users_role.id 
+    left join accredit on accredit.users_role=users_role.id
+    left join limit on limit.id=accredit.limit
+    where users.user_name=#{username}
+	</select>
+
+</mapper>
